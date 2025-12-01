@@ -8,6 +8,7 @@ from app.database.db_manager import (
 )
 from app.models.llm_service import LLMService
 from fastapi.security import OAuth2PasswordBearer
+from app.config.limiter import limiter
 
 router = APIRouter()
 llm_service = LLMService()
@@ -32,6 +33,7 @@ async def get_optional_user(authorization: Optional[str] = Header(None)):
     return None
 
 @router.post("/secure-query", response_model=QueryResponse)
+@limiter.limit('10/minute')
 async def secure_query(
     request: QueryRequest,
     current_user: Optional[User] = Depends(get_optional_user)
