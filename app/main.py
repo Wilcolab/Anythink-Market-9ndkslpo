@@ -7,6 +7,7 @@ import asyncio
 import time
 import os
 import logging
+from dotenv import load_dotenv
 from slowapi.errors import RateLimitExceeded
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.middleware import SlowAPIMiddleware
@@ -26,7 +27,7 @@ if not os.environ.get("ENGINE_WILCO_AI_URL"):
 from app.api.routes import router as api_router
 from app.auth.routes import router as auth_router
 from app.database.db_manager import init_db, populate_sample_data
-from api.config.limiter import limiter
+from app.config.limiter import limiter
 
 # Global variable to track application readiness
 app_ready = False
@@ -44,7 +45,7 @@ app = FastAPI(title="SecureInfo Concierge", description="Financial assistant app
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
-app.add_middleware(SlowAPIMiddleware)
+# app.add_middleware(SlowAPIMiddleware)
 
 @app.on_event("startup")
 async def startup_event():
